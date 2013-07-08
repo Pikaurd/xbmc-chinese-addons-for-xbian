@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addons>
+<addon id="plugin.video.youku_xbian"
+    name="Youku_XBian"
+    version="0.0.2"
+    provider-name="Taxigps|Pikaurd">
+    <extension
+        point="xbmc.python.pluginsource"
+        library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="en">YouKu video plugin</summary>
+        <summary lang="zh">优酷网视频插件</summary>
+        <description lang="en">online video from youku.com</description>
+        <description lang="zh">优酷视频</description>
+        <platform>all</platform>
+    </extension>
+</addon>
+</addons>
