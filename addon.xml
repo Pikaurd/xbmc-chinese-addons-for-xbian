@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="repository.pikaurd.xbian-addons-chinese" name="Chinese Add-on Repository" version="0.0.1" provider-name="Pikaurd">
+	<extension point="xbmc.addon.repository" name="Chinese Add-on Repository">
+        <info compressed="false">https://xbmc-chinese-addons-for-xbian.googlecode.com/git/addons/addons.xml</info>
+        <checksum>https://xbmc-chinese-addons-for-xbian.googlecode.com/git/addons/addons.xml.md5</checksum>
+        <datadir zip="false">https://xbmc-chinese-addons-for-xbian.googlecode.com/git/addons/</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+        <summary>Plugins Optimization for XBian</summary>
+		<summary lang="zh">专为Xbian优化的插件</summary>
+		<description lang="zh">针对XBian优化的插件</description>
+		<disclaimer>Almost plugins are modified from other people.</disclaimer>
+		<disclaimer lang="zh">本库中内容基本为修改他人插件后的内容</disclaimer>
+		<platform>all</platform>
+	</extension>
+</addon>
+
