@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="repository.pikaurd.xbian-addons-chinese" name="Chinese Add-on Repository" version="0.0.1" provider-name="Pikaurd">
-	<extension point="xbmc.addon.repository" name="Chinese Add-on Repository">
+<addon id="repository.pikaurd.xbian-addons-chinese" name="Chinese Add-on Repository for Xbian" version="0.0.2" provider-name="Pikaurd">
+	<extension point="xbmc.addon.repository" name="Chinese Add-on Repository for Xbian">
         <info compressed="false">https://xbmc-chinese-addons-for-xbian.googlecode.com/git/addons/addons.xml</info>
         <checksum>https://xbmc-chinese-addons-for-xbian.googlecode.com/git/addons/addons.xml.md5</checksum>
         <datadir zip="false">https://xbmc-chinese-addons-for-xbian.googlecode.com/git/addons/</datadir>
