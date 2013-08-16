@@ -13,7 +13,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.xbian_youku" name="树莓派_优酷" version="0.0.3" provider-name="Taxigps|Pikaurd">
+<addon id="plugin.video.xbian_youku" name="树莓派_优酷" version="0.1.0" provider-name="Taxigps|Pikaurd">
     <extension point="xbmc.python.pluginsource" library="main.py">
         <provides>video</provides>
     </extension>
