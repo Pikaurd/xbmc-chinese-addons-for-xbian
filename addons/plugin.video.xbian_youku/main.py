@@ -38,6 +38,22 @@ class YoukuDecoder:
             realId.append(mixed[int(ids[i])])  
         return ''.join(realId)
 
+    @staticmethod
+    def getM3U8PlayList(video_id, definition_type='hd2'):
+        '''
+        Get m3u8 playlist from youku
+
+        Args:
+            video_id: A string of that video's ID
+            definition_type: A string options in <hd2, mp4, flv>
+
+        Return:
+            The string of m3u8 URL
+            #http://www.youku.com/player/getM3U8/vid/XNTkwODc4NTg4/type/hd2/ts/v.m3u8
+        '''
+        return 'http://www.youku.com/player/getM3U8/vid/{video_id}/type/{definition_type}/ts/v.m3u8'.format(
+                video_id=video_id, definition_type=definition_type)
+
 def log(txt):
     message = '%s: %s' % (__addonname__, txt)
     xbmc.log(msg=message, level=xbmc.LOGDEBUG)
@@ -339,55 +355,68 @@ def selResolution(streamtypes):
     return streamtypes[ratelist[sel][2]], ratelist[sel][1]
 
 def playVideo(name,id,thumb,res):
-    url = 'http://v.youku.com/player/getPlayList/VideoIDS/%s' % (id)
-    link = getHttpData(url)
-    json_response = simplejson.loads(link)
-
-    vid = id
-    lang_select = int(__addon__.getSetting('lang_select')) # 默认|每次选择|自动首选
-    if lang_select != 0 and 'audiolang' in json_response['data'][0]['dvd']:
-        langlist = json_response['data'][0]['dvd']['audiolang']
-        if lang_select == 1:
-            list = [x['lang'] for x in langlist]
-            sel = xbmcgui.Dialog().select('选择语言', list)
-            if sel ==-1:
-                return
-            vid = langlist[sel]['vid'].encode('utf-8')
-            name = '%s %s' % (name, langlist[sel]['lang'].encode('utf-8'))
-        else:
-            lang_prefer = __addon__.getSetting('lang_prefer') # 国语|粤语
-            for i in range(0,len(langlist)):
-                if langlist[i]['lang'].encode('utf-8') == lang_prefer:
-                    vid = langlist[i]['vid'].encode('utf-8')
-                    name = '%s %s' % (name, langlist[i]['lang'].encode('utf-8'))
-                    break
-    if vid != id:
-        url = 'http://v.youku.com/player/getPlayList/VideoIDS/%s' % (vid)
+    if (__addon__.getSetting('play_type') == '1'): # 分段|连续
+        resolution_flag = __addon__.getSetting('resolution')
+        definition_type = 'hd2'
+        if resolution_flag == '2':
+            definition_type = 'mp4'
+        playlist = xbmc.PlayList(1)
+        playlist.clear()
+        m3u8 = YoukuDecoder.getM3U8PlayList(id, definition_type)
+        item = xbmcgui.ListItem(name, thumbnailImage=thumb)
+        item.setInfo(type='Video', infoLabels={'Title':name})
+        playlist.add(m3u8, item)
+        xbmc.Player().play(playlist)
+    else: # 分段模式
+        url = 'http://v.youku.com/player/getPlayList/VideoIDS/%s' % (id)
         link = getHttpData(url)
         json_response = simplejson.loads(link)
 
-    typeid, typename = selResolution(json_response['data'][0]['streamtypes'])
-    if typeid:
-        playlist = xbmc.PlayList(1)
-        playlist.clear()
-        seed = json_response['data'][0]['seed']
-        fileId = json_response['data'][0]['streamfileids'][typeid].encode('utf-8')
-        fileId = YoukuDecoder.getFileId(fileId,seed)
-        if typeid == 'mp4':
-            type = 'mp4'
-        else:
-            type = 'flv'
-        urls = []
-        length = len(json_response['data'][0]['segs'][typeid])
-        for i in range(length): 
-            no = '%02X' % i
-            k = json_response['data'][0]['segs'][typeid][i]['k'].encode('utf-8')
-            urls.append('http://f.youku.com/player/getFlvPath/sid/00_00/st/%s/fileid/%s%s%s?K=%s' % (type, fileId[:8], no, fileId[10:], k))
-            title = '第{0}/{1}节'.format(i+1, length)
-            item = xbmcgui.ListItem(name, thumbnailImage=thumb)
-            item.setInfo(type='Video', infoLabels={'Title':title})
-            playlist.add(urls[i], item)
-        xbmc.Player().play(playlist)
+        vid = id
+        lang_select = int(__addon__.getSetting('lang_select')) # 默认|每次选择|自动首选
+        if lang_select != 0 and 'audiolang' in json_response['data'][0]['dvd']:
+            langlist = json_response['data'][0]['dvd']['audiolang']
+            if lang_select == 1:
+                list = [x['lang'] for x in langlist]
+                sel = xbmcgui.Dialog().select('选择语言', list)
+                if sel ==-1:
+                    return
+                vid = langlist[sel]['vid'].encode('utf-8')
+                name = '%s %s' % (name, langlist[sel]['lang'].encode('utf-8'))
+            else:
+                lang_prefer = __addon__.getSetting('lang_prefer') # 国语|粤语
+                for i in range(0,len(langlist)):
+                    if langlist[i]['lang'].encode('utf-8') == lang_prefer:
+                        vid = langlist[i]['vid'].encode('utf-8')
+                        name = '%s %s' % (name, langlist[i]['lang'].encode('utf-8'))
+                        break
+        if vid != id:
+            url = 'http://v.youku.com/player/getPlayList/VideoIDS/%s' % (vid)
+            link = getHttpData(url)
+            json_response = simplejson.loads(link)
+
+        typeid, typename = selResolution(json_response['data'][0]['streamtypes'])
+        if typeid:
+            playlist = xbmc.PlayList(1)
+            playlist.clear()
+            seed = json_response['data'][0]['seed']
+            fileId = json_response['data'][0]['streamfileids'][typeid].encode('utf-8')
+            fileId = YoukuDecoder.getFileId(fileId,seed)
+            if typeid == 'mp4':
+                type = 'mp4'
+            else:
+                type = 'flv'
+            urls = []
+            length = len(json_response['data'][0]['segs'][typeid])
+            for i in range(length): 
+                no = '%02X' % i
+                k = json_response['data'][0]['segs'][typeid][i]['k'].encode('utf-8')
+                urls.append('http://f.youku.com/player/getFlvPath/sid/00_00/st/%s/fileid/%s%s%s?K=%s' % (type, fileId[:8], no, fileId[10:], k))
+                title = '第{0}/{1}节'.format(i+1, length)
+                item = xbmcgui.ListItem(name, thumbnailImage=thumb)
+                item.setInfo(type='Video', infoLabels={'Title':title})
+                playlist.add(urls[i], item)
+            xbmc.Player().play(playlist)
 
 def performChanges(name,id,listpage,genre,area,year,order):
     genrelist,arealist,yearlist = getList(listpage,genre,area,year)
