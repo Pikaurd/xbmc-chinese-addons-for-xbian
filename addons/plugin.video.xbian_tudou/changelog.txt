@@ -1,3 +1,7 @@
-﻿V0.0.1 2013-08-24 (Pikaurd)
+﻿V0.0.2 2013-08-24 (Pikaurd)
+- Bugfix: Repair [function: prepare_video]'s fetch playlist regular expression
+to match any symbol
+
+V0.0.1 2013-08-24 (Pikaurd)
 - Create this based tudou from taxigps at 1.1.7
 

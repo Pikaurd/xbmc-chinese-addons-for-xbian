@@ -248,7 +248,7 @@ def progList(name,type,area,genre,stat,year,order,page):
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
 def seriesList(name,url,thumb,res):
-    vid_search = re.search(r'(?<=http://www.tudou.com/albumcover/)\w+(?=.html)', url)
+    vid_search = re.search(r'(?<=http://www.tudou.com/albumcover/)[^.]*(?=.html)', url)
     if vid_search:
         video_id = vid_search.group()
         playlist_url = 'http://www.tudou.com/albumcover/albumdata/getAlbumItems.html?acode={vid}&charset=utf-8'.format(vid=video_id)
